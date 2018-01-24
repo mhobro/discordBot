@@ -4,12 +4,12 @@ const client = new Discord.Client();
 require('dotenv').config()
 
 client.on("ready", () => {
-  console.log("I am ready!");
+  console.log("Started successfully");
 });
 
 client.on("message", (message) => {
   if (message.content.startsWith("ping")) {
-    message.channel.send("pong!");
+    message.channel.send("Hallå där, du e la go'");
   }
 });
 
