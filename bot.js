@@ -29,7 +29,7 @@ function handleAction(arg, action){
       currChannel = getChannel(arg);
       if(currChannel){
         currChannel.join().then(connection => {
-          const dispatcher = connection.playFile('soundfiles/greeting_cut.mp3');
+          const dispatcher = connection.playFile('audio/greeting_cut.mp3');
           console.log('Connected to '+ arg);
         }).catch(console.error);
         break;
