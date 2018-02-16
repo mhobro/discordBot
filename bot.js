@@ -3,6 +3,7 @@ var opus = require('opusscript');
 var ytdl = require('ytdl-core');
 const bot = new Discord.Client();
 var currChannel, vol;
+var broadcast =  bot.createVoiceBroadcast();
 require('dotenv').config()
 
 bot.on("ready", () => {
@@ -10,7 +11,7 @@ bot.on("ready", () => {
 });
 
 bot.on("message", (message) => {
-  if(message.content.substring(0,1) == "!"){
+  if(message.content.substring(0,1) == "."){
     var args = message.content.substring(1).split(" ");
     var action = args[0];
     var arg;
@@ -34,12 +35,9 @@ function streamSound(url){
   console.log("Playing sound from " + url);
   if(url){
     const stream = ytdl(url, {filter: 'audioonly'});
-    const dispatcher = bot.voiceConnections.first().playStream(stream, options);
+    broadcast.playStream(stream, options);
+    const dispatcher2 = bot.voiceConnections.first().playBroadcast(broadcast);
   }
-}
-
-function stopStreaming(){
-    bot.voiceConnections.first().stopPlaying();
 }
 
 function playSound(name){
@@ -54,7 +52,8 @@ function handleAction(arg, action){
       currChannel = getChannel(arg);
       if(currChannel){
         currChannel.join().then(connection => {
-          const dispatcher = connection.playFile('audio/greeting.mp3');
+          broadcast.playFile('audio/greeting.mp3');
+          const dispatcher = connection.playBroadcast(broadcast);
           console.log('Connected to '+ arg);
         }).catch(console.error);
         break;
@@ -69,7 +68,10 @@ function handleAction(arg, action){
       streamSound(arg);
       break;
     case "stop":
-      stopStreaming();
+      var connections = bot.voiceConnections.array();
+      if(connections.length > 0){
+        broadcast.end();
+      }
       break;
     default:
       break;
