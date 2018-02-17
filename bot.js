@@ -4,6 +4,8 @@ var ytdl = require('ytdl-core');
 const bot = new Discord.Client();
 var currChannel, vol;
 var broadcast =  bot.createVoiceBroadcast();
+var streamDispatcher;
+var streamOptions = {seek: 0, volume: 0.2};
 require('dotenv').config()
 
 bot.on("ready", () => {
@@ -31,12 +33,18 @@ function getChannel(name) {
 }
 
 function streamSound(url){
-  const options = {seek: 0, volume: 0.2};
   console.log("Playing sound from " + url);
   if(url){
     const stream = ytdl(url, {filter: 'audioonly'});
-    broadcast.playStream(stream, options);
-    const dispatcher2 = bot.voiceConnections.first().playBroadcast(broadcast);
+    broadcast.playStream(stream, streamOptions);
+    streamDispatcher = bot.voiceConnections.first().playBroadcast(broadcast);
+  }
+}
+
+function changeVolume(vol){
+  if(vol && streamDispatcher && (parseFloat(vol) <= 100 || parseFloat(vol) >= 0)){
+    streamDispatcher.setVolume(parseFloat(vol)/100);
+    streamOptions.volume = parseFloat(vol)/100;
   }
 }
 
@@ -66,6 +74,9 @@ function handleAction(arg, action){
       break;
     case "yt":
       streamSound(arg);
+      break;
+    case "vol":
+      changeVolume(arg);
       break;
     case "stop":
       var connections = bot.voiceConnections.array();
