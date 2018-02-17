@@ -20,7 +20,7 @@ bot.on("message", (message) => {
     if(args.length > 1){
       arg = args[1]
     }
-    handleAction(arg, action);
+    handleAction(arg, action, message);
   }
 });
 
@@ -51,7 +51,7 @@ function changeVolume(vol){
 function playSound(name){
 }
 
-function handleAction(arg, action){
+function handleAction(arg, action, message){
   switch(action){
     case "ping":
       message.channel.send("Hallå där, du e la go'");
