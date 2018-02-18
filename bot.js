@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 var opus = require('opusscript');
 var ytdl = require('ytdl-core');
 const bot = new Discord.Client();
+var fs = require('fs');
 var currChannel, vol;
 var broadcast =  bot.createVoiceBroadcast();
 var streamDispatcher;
@@ -48,7 +49,10 @@ function changeVolume(vol){
   }
 }
 
-function playSound(name){
+function readFromFile(path, callback){
+  fs.readFile(path, 'utf8', function(err, contents) {
+    callback(contents);
+  });
 }
 
 function handleAction(arg, action, message){
@@ -83,7 +87,11 @@ function handleAction(arg, action, message){
       if(connections.length > 0){
         broadcast.end();
       }
-      break;
+      break
+    case "torture":
+      var text = readFromFile("msg.txt", function(text){
+        message.channel.send(text);
+      });
     default:
       break;
   }
